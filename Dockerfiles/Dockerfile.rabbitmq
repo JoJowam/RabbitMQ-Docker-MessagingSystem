@@ -1,0 +1,8 @@
+# Imagem base
+FROM rabbitmq:3.8.14-management
+
+# Expõe a porta do RabbitMQ
+EXPOSE 5672
+
+# Expõe a porta do painel de controle do RabbitMQ
+EXPOSE 15672

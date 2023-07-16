@@ -1,0 +1,14 @@
+# Imagem base
+FROM python:3.9
+
+# Define o diretório de trabalho
+WORKDIR /app
+
+# Copia o código do consumidor para o contêiner
+COPY src/consumidor.py .
+
+# Instala as dependências necessárias
+RUN pip install pika
+
+# Comando para executar o consumidor
+CMD ["python", "consumidor.py"]

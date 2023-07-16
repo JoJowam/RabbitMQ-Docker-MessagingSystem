@@ -1,0 +1,24 @@
+version: '3'
+services: #Definição dos serviços que serão utilizados (produtores, consumidores e o RabbitMQ)
+  produtor:
+    image: jojowam/bcc362_produtor:latest #Imagem do produtor.
+    depends_on: #Dependência do produtor com o RabbitMQ, para que o produtor só seja iniciado após o RabbitMQ estar saudável.
+      rabbitmq:
+        condition: service_healthy
+    command: bash -c "sleep 8 && python produtor.py" #Aguarda 8 segundos antes de iniciar o script produtor.py
+  consumidor:
+    image: jojowam/bcc362_consumidor:latest
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    command: bash -c "sleep 8 && python consumidor.py"
+  rabbitmq:
+    image: jojowam/bcc362_rabbitmq:latest
+    ports: #Portas utilizadas pelo RabbitMQ
+      - '5672:5672'
+      - '15672:15672'
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"] #Teste de saúde do RabbitMQ a cada 5 segundos, com timeout de 3 segundos e 10 tentativas.
+      interval: 5s
+      timeout: 3s
+      retries: 10

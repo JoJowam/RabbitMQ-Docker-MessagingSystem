@@ -1,0 +1,30 @@
+version: '3'
+services:
+  produtor:
+    build:
+      context: ./Dockerfiles
+      dockerfile: Dockerfile.produtor
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    command: bash -c "sleep 8 && python produtor.py"
+  consumidor:
+    build:
+      context: ./Dockerfiles
+      dockerfile: Dockerfile.consumidor
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    command: bash -c "sleep 8 && python produtor.py"
+  rabbitmq:
+    build:
+      context: ./Dockerfiles
+      dockerfile: Dockerfile.rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
